@@ -19,6 +19,7 @@ Real-Time	Socket.IO (WebSockets)
 View Engine :	EJS
 Map Tiles :	OpenStreetMap
 
+
 <img width="1919" height="1020" alt="image" src="C:\Users\Tejeshwar Reddy\Downloads\RealTime-Tracker-App-main\485445308-4e1e9bac-c4c5-45dd-ba73-b4926d7c6b4d.png" />
 <img width="1919" height="1020" alt="image" src= "C:\Users\Tejeshwar Reddy\Downloads\RealTime-Tracker-App-main\485445890-9e5533f8-60ce-47f4-9fec-77b5c8d0bcc4.png"/>
 
@@ -27,7 +28,7 @@ Follow these steps to run the project locally:
 
 1️⃣ Clone the repository
 
-git clone https://github.com/Harshit-nijhawan/RealTime-Tracker-App.git
+git clone https://github.com/YaminiSeerapu51/RealTime-Tracker-App.git
 cd realtime-location-tracker
 
 npm install

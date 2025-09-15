@@ -20,9 +20,9 @@ View Engine :	EJS
 Map Tiles :	OpenStreetMap
 
 
-![image alt](<img width="1919" height="1020" alt="image" src="C:\Users\Tejeshwar Reddy\Downloads\RealTime-Tracker-App-main\485445308-4e1e9bac-c4c5-45dd-ba73-b4926d7c6b4d.png" />(https://github.com/YaminiSeerapu51/tracker-app/blob/a0b15dc16a196a4e6b1192857811e44b9a90bebb/485445890-9e5533f8-60ce-47f4-9fec-77b5c8d0bcc4.png))
+![image alt](https://github.com/YaminiSeerapu51/tracker-app/blob/69d1907d0a44ed3dcc650158d27c129826d68a62/485445308-4e1e9bac-c4c5-45dd-ba73-b4926d7c6b4d.png?raw=true)
 
-![image_alt](<img width="1919" height="1020" alt="image" src="C:\Users\Tejeshwar Reddy\Downloads\RealTime-Tracker-App-main\485445890-9e5533f8-60ce-47f4-9fec-77b5c8d0bcc4" />(https://github.com/YaminiSeerapu51/tracker-app/blob/a0b15dc16a196a4e6b1192857811e44b9a90bebb/485445890-9e5533f8-60ce-47f4-9fec-77b5c8d0bcc4.png))
+![image_alt](https://github.com/YaminiSeerapu51/tracker-app/blob/69d1907d0a44ed3dcc650158d27c129826d68a62/485445890-9e5533f8-60ce-47f4-9fec-77b5c8d0bcc4.png?raw=true)
 
 ⚙️ Installation & Setup
 Follow these steps to run the project locally:

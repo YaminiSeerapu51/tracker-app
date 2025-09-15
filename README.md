@@ -33,6 +33,8 @@ git clone https://github.com/YaminiSeerapu51/RealTime-Tracker-App.git
 cd realtime-location-tracker
 
 npm install
+
+
 npx nodemon app.js
 or 
 npm start

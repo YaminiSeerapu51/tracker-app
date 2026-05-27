@@ -19,13 +19,16 @@ const ConnectionStatus = () => {
     socket.on('connect_error', (error) => {
       setConnectionError(error.message);
       setIsConnected(false);
+      if (error.message === 'Authentication error') {
+        setConnectionError('Authentication failed - please login again');
+      }
     });
 
-    // Connect to socket
-    socket.connect();
-
     return () => {
-      socket.disconnect();
+      // Cleanup listeners only, don't disconnect (managed by AuthenticatedSocketManager)
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('connect_error');
     };
   }, []);
 

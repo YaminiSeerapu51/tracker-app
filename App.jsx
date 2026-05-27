@@ -3,10 +3,17 @@ import Map from './components/Map';
 import LocationTracker from './components/LocationTracker';
 import ConnectionStatus from './components/ConnectionStatus';
 import UserList from './components/UserList';
+import Login from './components/Login';
 import socket from './SocketConnect/socket';
+import { connectAuthenticatedSocket, disconnectAuthenticatedSocket, updateSocketToken } from './SocketConnect/authenticatedSocket';
+import { isAuthenticated, logout, getUser, setUser, isAuthenticated as checkAuth } from './SocketConnect/auth';
 import { getUserData, getLocationHistory } from './SocketConnect/api';
 
 function App() {
+  // Authentication state
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   // useState for state management
   const [markers, setMarkers] = useState({});
   const [users, setUsers] = useState([]);
@@ -17,8 +24,37 @@ function App() {
   const [userData, setUserData] = useState(null);
   const [locationHistory, setLocationHistory] = useState([]);
 
+  // Check authentication on load
+  useEffect(() => {
+    if (checkAuth()) {
+      const user = getUser();
+      setCurrentUser(user);
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+    setIsAuthenticated(true);
+    setUser(user);
+    updateSocketToken(getUser().token);
+    connectAuthenticatedSocket();
+  };
+
+  const handleLogout = () => {
+    logout();
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    disconnectAuthenticatedSocket();
+  };
+
   // useEffect for Socket.IO connection and location updates
   useEffect(() => {
+    if (!isAuthenticated) return;
+
+    // Connect authenticated socket
+    connectAuthenticatedSocket();
+
     // Socket.IO event listeners
     socket.on('locationUpdate', (data) => {
       const { id, latitude, longitude } = data;
@@ -73,8 +109,9 @@ function App() {
     return () => {
       socket.off('locationUpdate');
       socket.off('userDisconnected');
+      disconnectAuthenticatedSocket();
     };
-  }, []);
+  }, [isAuthenticated]);
 
   // Event handling function
   const handleToggleTracking = () => {
@@ -96,7 +133,7 @@ function App() {
   };
 
   // Conditional Rendering
-  if (loading) {
+  if (loading && !isAuthenticated) {
     return (
       <div style={{
         display: 'flex',
@@ -108,6 +145,11 @@ function App() {
         Loading...
       </div>
     );
+  }
+
+  // Show Login if not authenticated
+  if (!isAuthenticated) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
   }
 
   return (
@@ -142,6 +184,9 @@ function App() {
         boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
       }}>
         <h3>Controls</h3>
+        <p style={{ marginBottom: '10px', fontSize: '14px', color: '#666' }}>
+          User: {currentUser?.username || 'Anonymous'}
+        </p>
         <button 
           onClick={handleToggleTracking}
           style={{
@@ -151,10 +196,27 @@ function App() {
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '16px',
+            marginBottom: '10px',
+            width: '100%'
           }}
         >
           {trackingEnabled ? 'Stop Tracking' : 'Start Tracking'}
+        </button>
+        <button 
+          onClick={handleLogout}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#ff6b6b',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            width: '100%'
+          }}
+        >
+          Logout
         </button>
 
         {error && (

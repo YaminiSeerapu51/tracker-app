@@ -1,8 +1,21 @@
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
+import { config } from "./config";
 
-const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000', {
+const socket = io(config.socketUrl, {
   autoConnect: false,
   transports: ['websocket']
+});
+
+socket.on("connect", () => {
+  console.log("Connected to server");
+});
+
+socket.on("disconnect", () => {
+  console.log("Disconnected from server");
+});
+
+socket.on("connect_error", (error) => {
+  console.error("Connection error:", error);
 });
 
 export default socket;

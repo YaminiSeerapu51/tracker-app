@@ -5,9 +5,16 @@ import { saveLocationHistory } from '../SocketConnect/api';
 const LocationTracker = ({ onLocationUpdate, onError, trackingEnabled }) => {
   const [locationStatus, setLocationStatus] = useState('idle');
   const [error, setError] = useState(null);
+  const [rateLimitWarning, setRateLimitWarning] = useState(null);
 
   useEffect(() => {
     let watchId = null;
+
+    // Listen for rate limit events from server
+    socket.on('rateLimitExceeded', (data) => {
+      setRateLimitWarning(data.message);
+      setTimeout(() => setRateLimitWarning(null), data.retryAfter * 1000);
+    });
 
     const startTracking = () => {
       if (!navigator.geolocation) {
@@ -26,7 +33,8 @@ const LocationTracker = ({ onLocationUpdate, onError, trackingEnabled }) => {
           setError(null);
 
           // Emit location via Socket.IO
-          socket.emit('sendLocation', { latitude, longitude });
+          socket.emit("sendLocation", { latitude, longitude, userId: 'user' });
+          
 
           // Call the callback with location update
           onLocationUpdate && onLocationUpdate({ latitude, longitude });
@@ -67,6 +75,7 @@ const LocationTracker = ({ onLocationUpdate, onError, trackingEnabled }) => {
     }
 
     return () => {
+      socket.off('rateLimitExceeded');
       stopTracking();
     };
   }, [trackingEnabled, onLocationUpdate, onError]);
@@ -85,6 +94,7 @@ const LocationTracker = ({ onLocationUpdate, onError, trackingEnabled }) => {
       <h3>Location Status</h3>
       <p>Status: {locationStatus}</p>
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {rateLimitWarning && <p style={{ color: 'orange' }}>⚠️ {rateLimitWarning}</p>}
       <p>Tracking: {trackingEnabled ? 'Enabled' : 'Disabled'}</p>
     </div>
   );

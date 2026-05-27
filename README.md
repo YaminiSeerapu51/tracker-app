@@ -22,8 +22,6 @@ Map Tiles :	OpenStreetMap
 
 ![image alt](https://github.com/YaminiSeerapu51/tracker-app/blob/69d1907d0a44ed3dcc650158d27c129826d68a62/485445308-4e1e9bac-c4c5-45dd-ba73-b4926d7c6b4d.png?raw=true)
 
-![image_alt](https://github.com/YaminiSeerapu51/tracker-app/blob/69d1907d0a44ed3dcc650158d27c129826d68a62/485445890-9e5533f8-60ce-47f4-9fec-77b5c8d0bcc4.png?raw=true)
-
 ⚙️ Installation & Setup
 Follow these steps to run the project locally:
 

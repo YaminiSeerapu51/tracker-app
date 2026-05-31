@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Map from './components/Map';
 import LocationTracker from './components/LocationTracker';
 import ConnectionStatus from './components/ConnectionStatus';
 import UserList from './components/UserList';
 import Login from './components/Login';
+import ErrorBoundary from './components/ErrorBoundary';
 import socket from './SocketConnect/socket';
 import { connectAuthenticatedSocket, disconnectAuthenticatedSocket } from './SocketConnect/authenticatedSocket';
 import { auth } from './SocketConnect/auth';
+import { getApiError } from './SocketConnect/apiClient';
 
 function App() {
   // Application state
@@ -31,7 +33,9 @@ function App() {
       await auth.login(username, password);
       setCurrentUser(auth.getUser());
     } catch (err) {
-      setError(err.error || 'Login failed');
+      const message = getApiError(err, 'Login failed');
+      setError(message);
+      throw new Error(message);
     }
   };
 
@@ -88,7 +92,7 @@ function App() {
       socket.off('userDisconnected', handleUserDisconnected);
       disconnectAuthenticatedSocket();
     };
-  }, []);
+  }, [currentUser]);
 
   const handleToggleTracking = () => {
     setTrackingEnabled(prev => !prev);
@@ -102,10 +106,10 @@ function App() {
     setError(errorMessage);
   };
 
-  const handleMapClick = (e) => {
+  const handleMapClick = useCallback((e) => {
     const { lat, lng } = e.latlng;
     console.log('Map clicked at:', lat, lng);
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -121,33 +125,60 @@ function App() {
     );
   }
 
-  if (!isAuthenticated()) {
-    return <Login onLoginSuccess={handleLoginSuccess} />;
+  if (!auth.isAuthenticated()) {
+    return (
+      <ErrorBoundary name="Login" title="Login unavailable">
+        <Login onLoginSuccess={handleLoginSuccess} />
+      </ErrorBoundary>
+    );
   }
 
   return (
     <div>
-      <Map 
-        markers={markers} 
-        onMapClick={handleMapClick}
-        center={currentLocation ? [currentLocation.latitude, currentLocation.longitude] : [0, 0]}
-      />
+      <ErrorBoundary
+        name="Map"
+        title="Map unavailable"
+        style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1000 }}
+      >
+        <Map 
+          markers={markers} 
+          onMapClick={handleMapClick}
+          center={currentLocation ? [currentLocation.latitude, currentLocation.longitude] : [0, 0]}
+        />
+      </ErrorBoundary>
       
-      <ConnectionStatus />
+      <ErrorBoundary
+        name="ConnectionStatus"
+        title="Connection status unavailable"
+        style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000 }}
+      >
+        <ConnectionStatus />
+      </ErrorBoundary>
       
-      <LocationTracker 
-        onLocationUpdate={handleLocationUpdate}
-        onError={handleError}
-        trackingEnabled={trackingEnabled}
-      />
+      <ErrorBoundary
+        name="LocationTracker"
+        title="Location tracker unavailable"
+        style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}
+      >
+        <LocationTracker 
+          onLocationUpdate={handleLocationUpdate}
+          onError={handleError}
+          trackingEnabled={trackingEnabled}
+        />
+      </ErrorBoundary>
       
-      <UserList users={users} />
+      <ErrorBoundary
+        name="UserList"
+        title="User list unavailable"
+        style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}
+      >
+        <UserList users={users} />
+      </ErrorBoundary>
 
       <div style={{
         position: 'absolute',
-        top: '10px',
+        bottom: '10px',
         right: '10px',
-        marginTop: '200px',
         zIndex: 1000,
         backgroundColor: 'white',
         padding: '15px',

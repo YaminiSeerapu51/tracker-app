@@ -1,25 +1,38 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 const Map = ({ markers, onMapClick, center }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef({});
+  const onMapClickRef = useRef(onMapClick);
 
-  // Initialize map
+  useEffect(() => {
+    onMapClickRef.current = onMapClick;
+  }, [onMapClick]);
+
   useEffect(() => {
     if (!mapInstanceRef.current && mapRef.current) {
       mapInstanceRef.current = L.map(mapRef.current).setView(center || [0, 0], 13);
-      
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Real-Time Tracker'
       }).addTo(mapInstanceRef.current);
 
-      // Add click handler if provided
-      if (onMapClick) {
-        mapInstanceRef.current.on('click', onMapClick);
-      }
+      mapInstanceRef.current.on('click', (event) => {
+        onMapClickRef.current?.(event);
+      });
     }
 
     return () => {
@@ -28,28 +41,33 @@ const Map = ({ markers, onMapClick, center }) => {
         mapInstanceRef.current = null;
       }
     };
-  }, [center, onMapClick]);
+  }, []);
 
-  // Update markers when markers prop changes
+  useEffect(() => {
+    if (mapInstanceRef.current && center) {
+      mapInstanceRef.current.setView(center, mapInstanceRef.current.getZoom());
+    }
+  }, [center]);
+
   useEffect(() => {
     if (mapInstanceRef.current) {
-      // Remove old markers
-      Object.values(markersRef.current).forEach(marker => {
+      Object.values(markersRef.current).forEach((marker) => {
         mapInstanceRef.current.removeLayer(marker);
       });
       markersRef.current = {};
 
-      // Add new markers
       Object.entries(markers).forEach(([id, { latitude, longitude }]) => {
+        if (latitude == null || longitude == null) return;
         const marker = L.marker([latitude, longitude]).addTo(mapInstanceRef.current);
         markersRef.current[id] = marker;
       });
 
-      // Center map on latest marker if available
       const markerIds = Object.keys(markers);
       if (markerIds.length > 0) {
         const latestMarker = markers[markerIds[markerIds.length - 1]];
-        mapInstanceRef.current.setView([latestMarker.latitude, latestMarker.longitude]);
+        if (latestMarker.latitude != null && latestMarker.longitude != null) {
+          mapInstanceRef.current.setView([latestMarker.latitude, latestMarker.longitude]);
+        }
       }
     }
   }, [markers]);

@@ -6,29 +6,34 @@ const ConnectionStatus = () => {
   const [connectionError, setConnectionError] = useState(null);
 
   useEffect(() => {
-    // Socket.IO event listeners
-    socket.on('connect', () => {
+    const handleConnect = () => {
       setIsConnected(true);
       setConnectionError(null);
-    });
+    };
 
-    socket.on('disconnect', () => {
+    const handleDisconnect = () => {
       setIsConnected(false);
-    });
+    };
 
-    socket.on('connect_error', (error) => {
-      setConnectionError(error.message);
+    const handleConnectError = (error) => {
       setIsConnected(false);
       if (error.message === 'Authentication error') {
         setConnectionError('Authentication failed - please login again');
+      } else {
+        setConnectionError(error.message);
       }
-    });
+    };
+
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('connect_error', handleConnectError);
+
+    setIsConnected(socket.connected);
 
     return () => {
-      // Cleanup listeners only, don't disconnect (managed by AuthenticatedSocketManager)
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('connect_error');
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('connect_error', handleConnectError);
     };
   }, []);
 
@@ -45,8 +50,8 @@ const ConnectionStatus = () => {
     }}>
       <h3>Connection Status</h3>
       <p>
-        Status: {' '}
-        <span style={{ 
+        Status:{' '}
+        <span style={{
           color: isConnected ? 'green' : 'red',
           fontWeight: 'bold'
         }}>

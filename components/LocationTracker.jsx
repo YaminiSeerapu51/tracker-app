@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import socket from '../SocketConnect/socket';
 import { saveLocationHistory } from '../SocketConnect/api';
+import { auth } from '../SocketConnect/auth';
 
 const LocationTracker = ({ onLocationUpdate, onError, trackingEnabled }) => {
   const [locationStatus, setLocationStatus] = useState('idle');
@@ -33,7 +34,11 @@ const LocationTracker = ({ onLocationUpdate, onError, trackingEnabled }) => {
           setError(null);
 
           // Emit location via Socket.IO
-          socket.emit("sendLocation", { latitude, longitude, userId: 'user' });
+          socket.emit('sendLocation', {
+            latitude,
+            longitude,
+            userId: auth.getUser()?.id
+          });
           
 
           // Call the callback with location update

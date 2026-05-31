@@ -3,6 +3,7 @@ import socket from '../SocketConnect/socket';
 
 const UserList = ({ users }) => {
   const [localUsers, setLocalUsers] = useState(users);
+  const [hoveredUserId, setHoveredUserId] = useState(null);
 
   useEffect(() => {
     setLocalUsers(users);
@@ -10,7 +11,6 @@ const UserList = ({ users }) => {
 
   const handleUserClick = (userId) => {
     console.log('Clicked user:', userId);
-    // Could add functionality to focus on specific user
   };
 
   return (
@@ -30,18 +30,21 @@ const UserList = ({ users }) => {
       {localUsers.length === 0 ? (
         <p>No users connected</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {localUsers.map((user) => (
-            <li 
+            <li
               key={user.id}
               onClick={() => handleUserClick(user.id)}
+              onMouseEnter={() => setHoveredUserId(user.id)}
+              onMouseLeave={() => setHoveredUserId(null)}
               style={{
                 padding: '5px',
                 cursor: 'pointer',
-                '&:hover': { backgroundColor: '#f0f0f0' }
+                backgroundColor: hoveredUserId === user.id ? '#f0f0f0' : 'transparent',
+                borderRadius: '4px'
               }}
             >
-              User {user.id.slice(0, 8)}
+              {user.username || `User ${user.id.slice(0, 8)}`}
             </li>
           ))}
         </ul>

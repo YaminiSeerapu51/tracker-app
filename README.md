@@ -32,6 +32,10 @@ cd realtime-location-tracker
 
 npm install
 
+Challenges: 
+- Env variables very careful
+- Root Directory error (have to mention it in Railway)
+  
 
 npx nodemon app.js
 or 

@@ -19,8 +19,9 @@ Real-Time	Socket.IO (WebSockets)
 View Engine :	EJS
 Map Tiles :	OpenStreetMap
 
+<img width="1782" height="737" alt="image" src="https://github.com/user-attachments/assets/4d3d3d2a-57e4-4650-987f-5e8848f5eb42" />
 
-![image alt](https://github.com/YaminiSeerapu51/tracker-app/blob/69d1907d0a44ed3dcc650158d27c129826d68a62/485445308-4e1e9bac-c4c5-45dd-ba73-b4926d7c6b4d.png?raw=true)
+
 
 ⚙️ Installation & Setup
 Follow these steps to run the project locally:

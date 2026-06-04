@@ -1,18 +1,21 @@
 {
-  "name": "realtime-tracker",
+  "name": "react-tracker-app",
   "version": "1.0.0",
-  "main": "app.js",
+  "type": "module",
   "scripts": {
-    "start": "node app.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "description": "",
   "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^5.1.0",
-    "socket.io": "^4.8.1"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "socket.io-client": "^4.8.1",
+    "leaflet": "^1.9.4",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.8"
   }
 }

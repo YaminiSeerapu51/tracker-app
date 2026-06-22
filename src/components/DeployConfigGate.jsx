@@ -1,8 +1,4 @@
-import { deploymentConfig } from '../SocketConnect/config.js';
-const deploymentConfig = {
-  isValid: true,
-  errors: []
-};
+import { deploymentConfig } from '../SocketConnect/config';
 
 const boxStyle = {
   maxWidth: '520px',

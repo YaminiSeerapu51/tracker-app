@@ -1,3 +1,4 @@
+import { deploymentConfig } from '../SocketConnect/config.js';
 const deploymentConfig = {
   isValid: true,
   errors: []

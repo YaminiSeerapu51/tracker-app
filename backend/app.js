@@ -16,9 +16,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
 const PORT = process.env.PORT || 3000;
 
 const allowedOrigins = [
-  'tracker-app-six-lyart.vercel.app',
-  'tracker-app-git-main-yaminiseerapu51s-projects.vercel.app',
-  'tracker-cnm4omk56-yaminiseerapu51s-projects.vercel.app',
+  'https://tracker-app-six-lyart.vercel.app',
+  'https://tracker-app-git-main-yaminiseerapu51s-projects.vercel.app',
+  'https://tracker-cnm4omk56-yaminiseerapu51s-projects.vercel.app',
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
